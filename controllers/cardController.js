@@ -24,6 +24,7 @@ const getCard = async (req, res) => {
 const addProductToCard = async (req, res) => {
   const { id } = req.userInfo
   const { cardList } = req.body
+  if (!cardList) return res.status(400).json({ message: 'Card list is empty' })
   cardList.forEach((product) => {
     redis.hSet(`card${id}`, product.productId, product.qty)
   })
