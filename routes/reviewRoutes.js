@@ -14,7 +14,7 @@ const verifyJWT = require('../middleware/verifyJWT')
  * @swagger
  * /review/{productId}:
  *   get:
- *     summary: Get all products
+ *     summary: Get reviews for product
  *     tags: [Review]
  *     parameters:
  *       - in: path
@@ -29,6 +29,34 @@ const verifyJWT = require('../middleware/verifyJWT')
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ReviewList'
+ *       400:
+ *         description: Bad request
+ */
+
+/**
+ * @swagger
+ * /review/{productId}:
+ *   post:
+ *     summary: Add review for product
+ *     tags: [Review]
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *        application/json:
+ *         schema:
+ *           $ref: '#/components/schemas/AddReviewBody'
+ *     responses:
+ *       200:
+ *         description: Get all products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ReviewResponse'
  *       400:
  *         description: Bad request
  */

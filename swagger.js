@@ -11,6 +11,10 @@ const options = {
       {
         url: 'http://localhost:3000',
         description: 'Development server'
+      },
+      {
+        url: 'https://fakeshopapi.onrender.com',
+        description: 'Production server'
       }
     ],
     components: {
@@ -239,6 +243,19 @@ const options = {
           type: 'array',
           items: {
             $ref: '#/components/schemas/ReviewResponse'
+          }
+        },
+        AddReviewBody: {
+          type: 'object',
+          properties: {
+            review: {
+              type: 'string',
+              example: 'This is a great product'
+            },
+            rating: {
+              type: 'int',
+              example: 4
+            }
           }
         }
       },
