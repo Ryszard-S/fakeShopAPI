@@ -4,6 +4,8 @@
 
 You can create a new user, add reviews, and add products to the cart. All data created externally will be deleted after 1 hour.
 
+### Don't use your personal informations. 
+
 [Swagger Documentation of API](https://fakeshopapi.onrender.com/api-docs/)
 for cold start of server it could take a while :) 
 

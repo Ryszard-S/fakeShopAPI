@@ -40,9 +40,7 @@ const userSchema = new mongoose.Schema({
       validator: (value) => {
         return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)
       },
-      message: (props) => `${props.value} is not a valid email!`,
-
-
+      message: (props) => `${props.value} is not a valid email!`
     }
   },
 
@@ -65,6 +63,14 @@ const userSchema = new mongoose.Schema({
     expires: 1
   }
 })
+
+userSchema.options.toJSON = {
+  virtuals: true,
+  transform: function (doc, ret) {
+    delete ret._id
+    delete ret.__v
+  }
+}
 
 userSchema.pre('save', function (next) {
   this.updatedAt = Date.now()

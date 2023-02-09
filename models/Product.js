@@ -1,5 +1,6 @@
 // @ts-nocheck
 const mongoose = require('mongoose')
+const BASE_URL = process.env.BASE_URL
 
 const productSchema = new mongoose.Schema({
   name: {
@@ -13,8 +14,6 @@ const productSchema = new mongoose.Schema({
     type: String,
     default: 'other'
   },
-  // generate regex for email
-  // ^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$
   photos: {
     type: [],
     default: ['default.png']
@@ -41,8 +40,33 @@ const productSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: () => Date.now()
+  },
+  rating: {
+    type: Number
   }
 })
+
+productSchema.options.toJSON = {
+  virtuals: true,
+  transform: function (doc, ret) {
+    delete ret._id
+    delete ret.__v
+    ret.photos = ret.photos.map((photo) => {
+      return `${BASE_URL}/images/${photo}`
+    })
+  }
+}
+
+productSchema.options.toObject = {
+  virtuals: true,
+  transform: function (doc, ret) {
+    delete ret._id
+    delete ret.__v
+    ret.photos = ret.photos.map((photo) => {
+      return `${BASE_URL}/images/${photo}`
+    })
+  }
+}
 
 productSchema.pre('save', function (next) {
   this.updatedAt = Date.now()

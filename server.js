@@ -14,12 +14,10 @@ const options = require('./swagger')
 
 const openapiSpecification = swaggerJsdoc(options)
 
-mongoose.connect(MONGODB_URI, (mess, err) => {
-  if (!err) {
-    console.log('Connected to MONGODB')
-  } else {
-    console.log('Error connecting to MONGODB', err)
-  }
+mongoose.connect(MONGODB_URI)
+
+mongoose.connection.on('error', (err) => {
+  console.log(err)
 })
 
 const app = express()

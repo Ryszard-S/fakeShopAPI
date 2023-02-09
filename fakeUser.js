@@ -9,4 +9,6 @@ const brand = faker.company.companyName()
 
 console.log({ username, name: firstName, lastName, password, email })
 console.log({ brand })
- 
+
+let dd = new Date('2023-02-09T14:10:56.940Z').toLocaleString()
+console.log(dd)

@@ -10,9 +10,7 @@ const getReviews = async (req, res) => {
 
   try {
     const reviwes = await Review.find({ product: id_product })
-      .select('-__v')
       .populate({ path: 'user', select: ['username', 'avatarURL'] })
-      .lean()
     if (!reviwes) return res.status(404).json({ message: 'Invalid product id' })
     res.json(reviwes)
   } catch (err) {

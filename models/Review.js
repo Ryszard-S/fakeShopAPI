@@ -34,15 +34,16 @@ const reviewSchema = new mongoose.Schema({
   },
   expiresAt: {
     type: Date,
-    default: () => Date.now() + 1000 * 60 * 5,
+    default: () => Date.now() + 1000 * 60 * 60,
     expires: 1
   }
 })
 reviewSchema.options.toJSON = {
+  virtuals: true,
   transform: function (doc, ret) {
-    ret.id = ret._id
     delete ret._id
     delete ret.__v
+
   }
 }
 reviewSchema.pre('save', function (next) {

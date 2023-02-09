@@ -1,29 +1,29 @@
-// @ts-nocheck
 const Product = require('../models/Product')
 const Review = require('../models/Review')
-const User = require('../models/User')
 const redis = require('./redis')
-// const redis = require('../controllers/redis')
 
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'
 // @desc Get all products
 // @route GET /products
 // @access Public
 const getProducts = async (req, res) => {
   try {
-    const prod = await Product.find().select('-__v').lean()
-    const products = prod.map((product) => {
-      return {
-        ...product,
-        photos: product.photos.map((photo) => {
-          return `http://localhost:3000/images/${photo}`
-        })
-      }
-    })
+    let prod = await Product.find({})
+    console.log(prod)
+
+    // const products = prod.map((product) => {
+    //   return {
+    //     ...product,
+    //     photos: product.photos.map((photo) => {
+    //       return `${BASE_URL}/images/${photo}`
+    //     })
+    //   }
+    // })
     const xxx = await Promise.all(
-      products.map(async (product) => {
+      prod.map(async (product) => {
         const rating = await redis.get(`rate${product._id}`)
         if (rating) {
-          product = { ...product, rating }
+          product.rating = +rating
           console.warn(product)
         } else {
           const reviews = await Review.find({ product: product._id }).select('rate')
@@ -32,7 +32,7 @@ const getProducts = async (req, res) => {
           }, 0)
           const avg = sum / reviews.length || 0
           redis.setEx(`rate${product._id}`, 1200, avg.toString())
-          product = { ...product, rating: avg }
+          product.rating = avg
         }
         return product
       })
@@ -50,30 +50,31 @@ const getProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   const { id } = req.params
   try {
-    let product = await Product.findById(id).select('-__v').lean()
+    let product = await Product.findById(id).exec()
+
     if (!product) return res.status(404).json({ message: 'Product not found' })
 
     const reviews = await Review.find({ product: id })
-      .select(['-__v', '-product'])
+      .select(['-product'])
       .populate({ path: 'user', select: ['username', 'avatarURL'] })
 
     const rating = await redis.get(`rate${id}`)
     if (rating) {
-      product = { ...product, rating }
+      product.rating = +rating
+      console.log(rating)
     } else {
       const sum = reviews.reduce((acc, cur) => {
         return acc + cur.rate
       }, 0)
-      const avg = sum / reviews.length
-      console.log(avg, sum, reviews.length)
-
+      let avg = sum / reviews.length
+      if (isNaN(avg)) {
+        avg = 0
+      }
+      console.log(avg)
       await redis.setEx(`rate${product._id}`, 1200, avg.toString())
-      product = { ...product, rating: avg }
+      product.rating = avg
     }
 
-    product.photos = product.photos.map((photo) => {
-      return `http://localhost:3000/images/${photo}`
-    })
     res.json({ product, reviews })
   } catch (err) {
     if (err.kind === 'ObjectId') {
