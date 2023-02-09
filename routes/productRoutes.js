@@ -25,7 +25,9 @@ const productController = require('../controllers/productController')
  *         description: Bad request
  */
 
-router.route('/').get(productController.getProducts).post(productController.createProduct)
+router.route('/').get(productController.getProducts)
+
+// router.route('/').post(productController.createProduct)
 
 /**
  * @swagger
@@ -48,6 +50,8 @@ router.route('/').get(productController.getProducts).post(productController.crea
  *               $ref: '#/components/schemas/Product'
  *       400:
  *         description: Bad request
+ *       404:
+ *         description: Product not found
  */
 
 router.route('/:id').get(productController.getProductById)

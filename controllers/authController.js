@@ -91,7 +91,7 @@ const refresh = (req, res) => {
     if (!foundUser) return res.status(401).json({ message: 'Unauthorized' })
 
     const accessToken = signAccessToken(foundUser)
-    console.log('accessToken', accessToken)
+ 
 
     res.json({ accessToken })
   })
@@ -107,7 +107,7 @@ const logout = (req, res) => {
 }
 
 const signAccessToken = (userObject) => {
-  console.log('userObject', userObject)
+ 
   const token = jwt.sign(
     {
       UserInfo: {

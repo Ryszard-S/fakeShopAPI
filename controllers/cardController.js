@@ -7,7 +7,7 @@ const redis = require('./redis')
 // @route GET /products
 // @access Public
 const getCard = async (req, res) => {
-  console.log('getCard')
+
   const { id } = req.userInfo
 
   const obj = await redis.hGetAll(`card${id}`)

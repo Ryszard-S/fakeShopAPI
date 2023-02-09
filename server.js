@@ -40,7 +40,4 @@ app.get('/', (req, res) => {
   res.json({ Odp: 'Hello World!' })
 })
 
-const userRouter = require('./routes/user')
-app.use('/user', userRouter)
-
 app.listen(PORT)

@@ -46,7 +46,6 @@ const createReview = async (req, res) => {
       return acc + cur.rate
     }, 0)
     const avg = sum / rate.length
-    console.log(rate, sum, avg, rate.length)
     redis.setEx(`rate${product._id}`, 1200, avg.toString())
     return res.status(201).json(newReview)
   } catch (err) {
