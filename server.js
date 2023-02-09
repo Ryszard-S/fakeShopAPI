@@ -1,6 +1,8 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const path = require('path')
+var cors = require('cors')
+
 mongoose.set('strictQuery', false)
 require('dotenv').config()
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/your-database-name'
@@ -13,10 +15,15 @@ const options = require('./swagger')
 const openapiSpecification = swaggerJsdoc(options)
 
 mongoose.connect(MONGODB_URI, (mess, err) => {
-  console.log('Connected to MONGODB')
+  if (!err) {
+    console.log('Connected to MONGODB')
+  } else {
+    console.log('Error connecting to MONGODB', err)
+  }
 })
 
 const app = express()
+app.use(cors())
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(openapiSpecification))
 
@@ -29,7 +36,7 @@ app.use('/review', require('./routes/reviewRoutes'))
 app.use('/card', require('./routes/cardRoutes'))
 
 app.get('/', (req, res) => {
-  res.status(500)
+  res.status(200)
   res.json({ Odp: 'Hello World!' })
 })
 
