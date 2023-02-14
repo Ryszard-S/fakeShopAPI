@@ -62,7 +62,7 @@ const removeProductFromCard = async (req, res) => {
 const clearAllCard = async (req, res) => {
   const { id } = req.userInfo
   redis.del(`card${id}`)
-  return res.json({ message: 'Card cleared' })
+  return res.status(204).json({ message: 'Card cleared' })
 }
 
 module.exports = {

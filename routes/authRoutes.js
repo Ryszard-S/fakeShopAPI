@@ -66,6 +66,8 @@ router.route('/login').post(authController.login)
  * @swagger
  * /auth/refresh:
  *   post:
+ *     security:
+ *       - bearerAuth: []
  *     summary: register new user
  *     tags: [Auth]
  *     requestBody:
@@ -91,6 +93,8 @@ router.route('/refresh').post(authController.refresh)
  * @swagger
  * /auth/logout:
  *   delete:
+ *     security:
+ *       - bearerAuth: []
  *     summary: logout user
  *     tags: [Auth]
  *

@@ -9,15 +9,6 @@ const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'
 const getProducts = async (req, res) => {
   try {
     let prod = await Product.find({})
-
-    // const products = prod.map((product) => {
-    //   return {
-    //     ...product,
-    //     photos: product.photos.map((photo) => {
-    //       return `${BASE_URL}/images/${photo}`
-    //     })
-    //   }
-    // })
     const xxx = await Promise.all(
       prod.map(async (product) => {
         const rating = await redis.get(`rate${product._id}`)
@@ -36,7 +27,7 @@ const getProducts = async (req, res) => {
       })
     )
 
-    res.json(xxx)
+    return res.status(200).json(xxx)
   } catch (err) {
     res.status(500).json({ message: err.message })
   }

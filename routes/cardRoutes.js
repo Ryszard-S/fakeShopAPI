@@ -14,12 +14,13 @@ const verifyJWT = require('../middleware/verifyJWT')
  * @swagger
  * /card:
  *   get:
- *     summary: Returns the list of all the bookssssss
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Returns the list of products in card
  *     tags: [Card]
-
  *     responses:
  *       200:
- *         description: The list of the books
+ *         description: The list of the products
  *         content:
  *           application/json:
  *             schema:
@@ -32,14 +33,15 @@ router.route('/').get(verifyJWT, cardController.getCard)
  * @swagger
  * /card:
  *   post:
+ *     security:
+ *       - bearerAuth: []
  *     tags: [Card]
- *     summary: Add books to the list
+ *     summary: Add product to card
  *     requestBody:
  *      content:
  *        application/json:
  *          schema:
  *            $ref: '#/components/schemas/Card'
- *
  *     responses:
  *       200:
  *         description: The list of the books
@@ -48,7 +50,7 @@ router.route('/').get(verifyJWT, cardController.getCard)
  *             schema:
  *               $ref: '#/components/schemas/Card'
  *       404:
- *         description: The list of the books
+ *         description: Card list is empty
  */
 
 router.route('/').post(verifyJWT, cardController.addProductToCard)
@@ -57,8 +59,10 @@ router.route('/').post(verifyJWT, cardController.addProductToCard)
  * @swagger
  * /card:
  *  delete:
+ *   security:
+ *     - bearerAuth: []
  *   tags: [Card]
- *   summary: Delete books from the list
+ *   summary: Delete products from card
  *   requestBody:
  *     content:
  *      application/json:
@@ -66,7 +70,7 @@ router.route('/').post(verifyJWT, cardController.addProductToCard)
  *         $ref: '#/components/schemas/CardToDelete'
  *   responses:
  *     200:
- *       description: The list of the books
+ *       description: Products in card
  *       content:
  *         application/json:
  *           schema:
@@ -78,11 +82,13 @@ router.route('/').delete(verifyJWT, cardController.removeProductFromCard)
  * @swagger
  * /card/all:
  *  delete:
+ *   security:
+ *     - bearerAuth: []
  *   tags: [Card]
  *   summary: Delete all
  *   responses:
- *     200:
- *       description: The list of the books
+ *     204:
+ *       description: deleted all products from card
  *       content:
  *         application/json:
  *           schema:

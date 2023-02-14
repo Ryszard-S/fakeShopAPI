@@ -308,11 +308,11 @@ const options = {
         }
       }
     },
-    security: [
-      {
-        bearerAuth: []
-      }
-    ]
+    // security: [
+    //   {
+    //     bearerAuth: []
+    //   }
+    // ]
   },
   apis: ['./routes/*Routes.js']
 }

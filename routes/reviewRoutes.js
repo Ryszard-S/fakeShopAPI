@@ -31,8 +31,8 @@ router
    *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/ReviewList'
-   *       400:
-   *         description: Bad request
+   *       404:
+   *         description: Invalid product id
    */
 
   .get(reviewController.getReviews)
@@ -41,6 +41,8 @@ router
    * @swagger
    * /review/{productId}:
    *   post:
+   *     security:
+   *       - bearerAuth: []
    *     summary: Add review for product
    *     tags: [Review]
    *     parameters:
