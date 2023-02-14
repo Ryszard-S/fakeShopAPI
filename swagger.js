@@ -210,9 +210,13 @@ const options = {
         ReviewResponse: {
           type: 'object',
           properties: {
-            _id: {
+            id: {
               type: 'string',
               example: '63e030231d1b457177a23da4'
+            },
+            user: {
+              type: 'object',
+              $ref: '#/components/schemas/UserPropagate'
             },
             review: {
               type: 'string',
@@ -255,6 +259,23 @@ const options = {
             rating: {
               type: 'int',
               example: 4
+            }
+          }
+        },
+        UserPropagate: {
+          type: 'object',
+          properties: {
+            username: {
+              type: 'string',
+              example: 'Augusta188'
+            },
+            avatarURL: {
+              type: 'string',
+              example: 'https://api.dicebear.com/5.x/adventurer/svg?&eyebrow=variant06'
+            },
+            id: {
+              type: 'string',
+              example: '63eba8d6a09121a4c4ef5597'
             }
           }
         }

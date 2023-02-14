@@ -9,7 +9,6 @@ const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'
 const getProducts = async (req, res) => {
   try {
     let prod = await Product.find({})
-    console.log(prod)
 
     // const products = prod.map((product) => {
     //   return {
@@ -24,7 +23,6 @@ const getProducts = async (req, res) => {
         const rating = await redis.get(`rate${product._id}`)
         if (rating) {
           product.rating = +rating
-          console.warn(product)
         } else {
           const reviews = await Review.find({ product: product._id }).select('rate')
           const sum = reviews.reduce((acc, cur) => {
@@ -61,7 +59,6 @@ const getProductById = async (req, res) => {
     const rating = await redis.get(`rate${id}`)
     if (rating) {
       product.rating = +rating
-      console.log(rating)
     } else {
       const sum = reviews.reduce((acc, cur) => {
         return acc + cur.rate
@@ -70,7 +67,6 @@ const getProductById = async (req, res) => {
       if (isNaN(avg)) {
         avg = 0
       }
-      console.log(avg)
       await redis.setEx(`rate${product._id}`, 1200, avg.toString())
       product.rating = avg
     }

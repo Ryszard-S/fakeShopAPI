@@ -1,6 +1,7 @@
 const Product = require('../models/Product')
 const Review = require('../models/Review')
 const redis = require('../controllers/redis')
+const HTTPError = require('../utils/HTTPError')
 
 // @desc Get one review
 // @route GET /reviews/:id_product
@@ -9,8 +10,10 @@ const getReviews = async (req, res) => {
   const id_product = req.params.id_product
 
   try {
-    const reviwes = await Review.find({ product: id_product })
-      .populate({ path: 'user', select: ['username', 'avatarURL'] })
+    const reviwes = await Review.find({ product: id_product }).populate({
+      path: 'user',
+      select: ['username', 'avatarURL']
+    })
     if (!reviwes) return res.status(404).json({ message: 'Invalid product id' })
     res.json(reviwes)
   } catch (err) {
@@ -26,9 +29,12 @@ const createReview = async (req, res) => {
   const { rate, review } = req.body
   try {
     product = await Product.findById({ _id: id_product }).exec()
-    if (!product) throw new Error('Invalid product id')
+    if (!product) throw new HTTPError(404, 'Invalid product id')
+    const reviewExist = await Review.exists({ product: id_product, user: id_user })
+    if (reviewExist) throw new HTTPError(409, 'You have already reviewed this product')
   } catch (err) {
-    return res.status(404).json({ message: err.message })
+    if (err instanceof HTTPError) return res.status(err.statusCode).json({ message: err.message })
+    return res.status(500).json({ message: err.message })
   }
   const newReview = new Review({
     product: id_product,
