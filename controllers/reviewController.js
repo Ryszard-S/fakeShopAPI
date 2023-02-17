@@ -2,6 +2,7 @@ const Product = require('../models/Product')
 const Review = require('../models/Review')
 const redis = require('../controllers/redis')
 const HTTPError = require('../utils/HTTPError')
+const { recalculateRating } = require('../utils/rating')
 
 // @desc Get one review
 // @route GET /reviews/:id_product
@@ -45,15 +46,10 @@ const createReview = async (req, res) => {
   })
   try {
     await newReview.save()
-    const rate = await Review.find({ product: id_product }).select('rate')
-    const sum = rate.reduce((acc, cur) => {
-      return acc + cur.rate
-    }, 0)
-    const avg = sum / rate.length
-    redis.setEx(`rate${product._id}`, 1200, avg.toString())
+    recalculateRating(product)
     return res.status(201).json(newReview)
   } catch (err) {
-    return res.status(400).json({ message: err.message })
+    return res.status(500).json({ message: err.message })
   }
 }
 

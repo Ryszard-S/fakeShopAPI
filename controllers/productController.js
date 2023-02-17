@@ -1,5 +1,6 @@
 const Product = require('../models/Product')
 const Review = require('../models/Review')
+const { getRating } = require('../utils/rating')
 const redis = require('./redis')
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'
@@ -9,25 +10,14 @@ const BASE_URL = process.env.BASE_URL || 'http://localhost:3000'
 const getProducts = async (req, res) => {
   try {
     let prod = await Product.find({})
-    const xxx = await Promise.all(
+    const products = await Promise.all(
       prod.map(async (product) => {
-        const rating = await redis.get(`rate${product._id}`)
-        if (rating) {
-          product.rating = +rating
-        } else {
-          const reviews = await Review.find({ product: product._id }).select('rate')
-          const sum = reviews.reduce((acc, cur) => {
-            return acc + cur.rate
-          }, 0)
-          const avg = sum / reviews.length || 0
-          redis.setEx(`rate${product._id}`, 1200, avg.toString())
-          product.rating = avg
-        }
+        product.rating = await getRating(product)
         return product
       })
     )
 
-    return res.status(200).json(xxx)
+    return res.status(200).json(products)
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
@@ -47,20 +37,7 @@ const getProductById = async (req, res) => {
       .select(['-product'])
       .populate({ path: 'user', select: ['username', 'avatarURL'] })
 
-    const rating = await redis.get(`rate${id}`)
-    if (rating) {
-      product.rating = +rating
-    } else {
-      const sum = reviews.reduce((acc, cur) => {
-        return acc + cur.rate
-      }, 0)
-      let avg = sum / reviews.length
-      if (isNaN(avg)) {
-        avg = 0
-      }
-      await redis.setEx(`rate${product._id}`, 1200, avg.toString())
-      product.rating = avg
-    }
+    product.rating = await getRating(product)
 
     res.json({ product, reviews })
   } catch (err) {
